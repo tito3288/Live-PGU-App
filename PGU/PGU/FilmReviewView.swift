@@ -21,7 +21,7 @@ struct ClipItem: Identifiable {
 
 struct FilmReviewView: View {
 
-    @State private var isMenuOpen: Bool = false
+    @EnvironmentObject var navigationState: NavigationState
     @State private var selectedVideo: String? = nil
     @State private var player: AVPlayer = AVPlayer()
     @State private var isVideoPlaying: Bool = false
@@ -49,7 +49,7 @@ struct FilmReviewView: View {
                 HStack {
                     Button(action: {
                         withAnimation {
-                            isMenuOpen.toggle()
+                            navigationState.isMenuOpen.toggle()
                         }
                     }) {
                         Image(systemName: "line.3.horizontal")
@@ -186,68 +186,6 @@ struct FilmReviewView: View {
                     .padding(.horizontal, 20)
                 }
 
-                // Bottom Navigation Tab Bar
-                HStack {
-                    Spacer()
-
-                    NavigationLink(destination: HomeView()) {
-                        VStack(spacing: 4) {
-                            Image(systemName: "house")
-                                .font(.system(size: 24))
-                                .foregroundColor(.gray)
-                            Text("Home")
-                                .font(.caption)
-                                .fontWeight(.semibold)
-                                .foregroundColor(.gray)
-                        }
-                    }
-
-                    Spacer()
-
-                    NavigationLink(destination: InboxView()) {
-                        VStack(spacing: 4) {
-                            Image(systemName: "tray")
-                                .font(.system(size: 24))
-                                .foregroundColor(.gray)
-                            Text("Inbox")
-                                .font(.caption)
-                                .fontWeight(.semibold)
-                                .foregroundColor(.gray)
-                        }
-                    }
-
-                    Spacer()
-
-                    NavigationLink(destination: CampsView()) {
-                        VStack(spacing: 4) {
-                            Image(systemName: "mappin.and.ellipse")
-                                .font(.system(size: 24))
-                                .foregroundColor(.gray)
-                            Text("Camps")
-                                .font(.caption)
-                                .fontWeight(.semibold)
-                                .foregroundColor(.gray)
-                        }
-                    }
-
-                    Spacer()
-
-                    VStack(spacing: 4) {
-                        Image(systemName: "basketball.fill")
-                            .font(.system(size: 24))
-                            .foregroundColor(Color(hex: "c7972b"))
-                        Text("Resources")
-                            .font(.caption)
-                            .fontWeight(.semibold)
-                            .foregroundColor(Color(hex: "c7972b"))
-                    }
-
-                    Spacer()
-                }
-                .padding(.top, 12)
-                .padding(.bottom, 8)
-                .background(Color.white)
-                .shadow(color: Color.black.opacity(0.05), radius: 10, y: -5)
             }
 
             // Video Player Overlay
@@ -282,13 +220,14 @@ struct FilmReviewView: View {
             }
 
             // Sliding menu overlay
-            if isMenuOpen {
-                MenuView(isMenuOpen: $isMenuOpen, activePage: .resources)
+            if navigationState.isMenuOpen {
+                MenuView(isMenuOpen: $navigationState.isMenuOpen, activePage: .resources)
                     .frame(width: UIScreen.main.bounds.width)
                     .transition(.move(edge: .leading))
                     .zIndex(4)
             }
         }
+        .toolbar(navigationState.isMenuOpen ? .hidden : .visible, for: .tabBar)
         .navigationBarBackButtonHidden(true)
         .onChange(of: scenePhase) { newScenePhase in
             switch newScenePhase {

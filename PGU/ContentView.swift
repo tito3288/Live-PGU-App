@@ -12,67 +12,42 @@ import AdSupport
 
 struct ContentView: View {
     @StateObject var authViewModel = AuthenticationViewModel()
-    @EnvironmentObject var navigationState: NavigationState  // Add this line
-
+    @EnvironmentObject var navigationState: NavigationState
 
     var body: some View {
-        
-        NavigationView {
-            if authViewModel.isAuthenticated {
-                if navigationState.showInbox {  // Check if should navigate to Inbox
-                    InboxView()
-                        .navigationBarHidden(true)
-                } else {
-                    HomeView()
-                        .navigationBarHidden(true)
+        if authViewModel.isAuthenticated {
+            TabView(selection: $navigationState.selectedTab) {
+                Tab("Home", systemImage: "house.fill", value: .home) {
+                    NavigationStack {
+                        HomeView()
+                    }
                 }
-            } else {
+                Tab("Inbox", systemImage: "tray.fill", value: .inbox) {
+                    NavigationStack {
+                        InboxView()
+                    }
+                }
+                Tab("Camps", systemImage: "mappin.and.ellipse", value: .camps) {
+                    NavigationStack {
+                        CampsView()
+                    }
+                }
+                Tab("Resources", systemImage: "basketball.fill", value: .resources) {
+                    NavigationStack {
+                        FilmReviewView()
+                    }
+                }
+            }
+            .tint(Color(hex: "c7972b"))
+        } else {
+            NavigationStack {
                 LoginView()
                     .navigationBarHidden(true)
             }
         }
-//        .onAppear {
-//            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-//                requestPermission()
-//            }
-//        }
-        .accentColor(Color(hex: "c7972b"))
-        .navigationViewStyle(StackNavigationViewStyle())
-
-
-
     }
-    
-//    func requestPermission() {
-//        if #available(iOS 14, *) {
-//            ATTrackingManager.requestTrackingAuthorization { status in
-//                switch status {
-//                case .authorized:
-//                    // Tracking authorization dialog was shown
-//                    // and we are authorized
-//                    print("Authorized")
-//                    
-//                    // Now that we are authorized we can get the IDFA
-//                    print(ASIdentifierManager.shared().advertisingIdentifier)
-//                case .denied:
-//                    // Tracking authorization dialog was
-//                    // shown and permission is denied
-//                    print("Denied")
-//                case .notDetermined:
-//                    // Tracking authorization dialog has not been shown
-//                    print("Not Determined")
-//                case .restricted:
-//                    print("Restricted")
-//                @unknown default:
-//                    print("Unknown")
-//                }
-//            }
-//        }
-//    }
-
 }
 
 #Preview {
     ContentView()
-
 }

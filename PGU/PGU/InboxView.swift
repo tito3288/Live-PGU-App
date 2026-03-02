@@ -42,7 +42,7 @@ struct InboxView: View {
     @State private var firestoreNotifications = [FirestoreNotification]()
     @StateObject private var chatBotModel = ChatBotModel()
     @State private var isChatPresented = false
-    @State private var isMenuOpen: Bool = false
+    @EnvironmentObject var navigationState: NavigationState
     @State private var selectedFilter: InboxFilter = .all
 
     @Environment(\.managedObjectContext) private var viewContext
@@ -76,7 +76,7 @@ struct InboxView: View {
                 HStack {
                     Button(action: {
                         withAnimation {
-                            isMenuOpen.toggle()
+                            navigationState.isMenuOpen.toggle()
                         }
                     }) {
                         Image(systemName: "line.3.horizontal")
@@ -212,68 +212,6 @@ struct InboxView: View {
                 // Chat FAB
                 // (overlaid via ZStack below)
 
-                // Bottom Tab Bar
-                HStack {
-                    Spacer()
-
-                    NavigationLink(destination: HomeView()) {
-                        VStack(spacing: 4) {
-                            Image(systemName: "house")
-                                .font(.system(size: 24))
-                                .foregroundColor(.gray)
-                            Text("Home")
-                                .font(.caption)
-                                .fontWeight(.semibold)
-                                .foregroundColor(.gray)
-                        }
-                    }
-
-                    Spacer()
-
-                    VStack(spacing: 4) {
-                        Image(systemName: "tray.fill")
-                            .font(.system(size: 24))
-                            .foregroundColor(Color(hex: "c7972b"))
-                        Text("Inbox")
-                            .font(.caption)
-                            .fontWeight(.semibold)
-                            .foregroundColor(Color(hex: "c7972b"))
-                    }
-
-                    Spacer()
-
-                    NavigationLink(destination: CampsView()) {
-                        VStack(spacing: 4) {
-                            Image(systemName: "mappin.and.ellipse")
-                                .font(.system(size: 24))
-                                .foregroundColor(.gray)
-                            Text("Camps")
-                                .font(.caption)
-                                .fontWeight(.semibold)
-                                .foregroundColor(.gray)
-                        }
-                    }
-
-                    Spacer()
-
-                    NavigationLink(destination: FilmReviewView()) {
-                        VStack(spacing: 4) {
-                            Image(systemName: "basketball.fill")
-                                .font(.system(size: 24))
-                                .foregroundColor(.gray)
-                            Text("Resources")
-                                .font(.caption)
-                                .fontWeight(.semibold)
-                                .foregroundColor(.gray)
-                        }
-                    }
-
-                    Spacer()
-                }
-                .padding(.top, 12)
-                .padding(.bottom, 8)
-                .background(Color.white)
-                .shadow(color: Color.black.opacity(0.05), radius: 10, y: -5)
             }
 
             // Chat FAB overlay
@@ -301,13 +239,14 @@ struct InboxView: View {
             }
 
             // Sliding menu overlay
-            if isMenuOpen {
-                MenuView(isMenuOpen: $isMenuOpen, activePage: .inbox)
+            if navigationState.isMenuOpen {
+                MenuView(isMenuOpen: $navigationState.isMenuOpen, activePage: .inbox)
                     .frame(width: UIScreen.main.bounds.width)
                     .transition(.move(edge: .leading))
                     .zIndex(4)
             }
         }
+        .toolbar(navigationState.isMenuOpen ? .hidden : .visible, for: .tabBar)
         .onAppear {
             fetchNotificationsFromFirestore()
         }

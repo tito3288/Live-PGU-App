@@ -249,7 +249,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         saveNotificationToFirestore(userInfo)
         
         DispatchQueue.main.async {
-            NavigationState.shared.showInbox = true
+            NavigationState.shared.selectedTab = .inbox
         }
         
         completionHandler()

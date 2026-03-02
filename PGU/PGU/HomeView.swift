@@ -12,7 +12,7 @@ import UserNotifications
 
 struct HomeView: View {
     
-    @State private var isMenuOpen: Bool = false
+    @EnvironmentObject var navigationState: NavigationState
 
     var body: some View {
         
@@ -26,7 +26,7 @@ struct HomeView: View {
                 HStack {
                     Button(action: {
                         withAnimation {
-                            isMenuOpen.toggle()
+                            navigationState.isMenuOpen.toggle()
                         }
                     }) {
                         Image(systemName: "line.3.horizontal")
@@ -145,7 +145,7 @@ struct HomeView: View {
                                 .cornerRadius(20)
                                 
                                 // Main headline
-                                Text("4 States, 8 Stops,\nUnlimited Memories")
+                                Text("4 States, 4 Stops,\nUnlimited Memories")
                                     .font(.system(size: 28, weight: .bold))
                                     .foregroundColor(.white)
                                     .lineLimit(2)
@@ -294,82 +294,17 @@ struct HomeView: View {
                     }
                 }
                 
-                // Bottom Navigation Tab Bar
-                HStack {
-                    Spacer()
-                    
-                    // Home Tab (Active)
-                    VStack(spacing: 4) {
-                        Image(systemName: "house.fill")
-                            .font(.system(size: 24))
-                            .foregroundColor(Color(hex: "c7972b"))
-                        Text("Home")
-                            .font(.caption)
-                            .fontWeight(.semibold)
-                            .foregroundColor(Color(hex: "c7972b"))
-                    }
-                    
-                    Spacer()
-                    
-                    // Inbox Tab
-                    NavigationLink(destination: InboxView()) {
-                        VStack(spacing: 4) {
-                            Image(systemName: "tray")
-                                .font(.system(size: 24))
-                                .foregroundColor(.gray)
-                            Text("Inbox")
-                                .font(.caption)
-                                .fontWeight(.semibold)
-                                .foregroundColor(.gray)
-                        }
-                    }
-                    
-                    Spacer()
-                    
-                    // Camps Tab
-                    NavigationLink(destination: CampsView()) {
-                        VStack(spacing: 4) {
-                            Image(systemName: "mappin.and.ellipse")
-                                .font(.system(size: 24))
-                                .foregroundColor(.gray)
-                            Text("Camps")
-                                .font(.caption)
-                                .fontWeight(.semibold)
-                                .foregroundColor(.gray)
-                        }
-                    }
-                    
-                    Spacer()
-                    
-                    // Resources Tab
-                    NavigationLink(destination: FilmReviewView()) {
-                        VStack(spacing: 4) {
-                            Image(systemName: "basketball")
-                                .font(.system(size: 24))
-                                .foregroundColor(.gray)
-                            Text("Resources")
-                                .font(.caption)
-                                .fontWeight(.semibold)
-                                .foregroundColor(.gray)
-                        }
-                    }
-                    
-                    Spacer()
-                }
-                .padding(.top, 12)
-                .padding(.bottom, 8)
-                .background(Color.white)
-                .shadow(color: Color.black.opacity(0.05), radius: 10, y: -5)
             }
             
             // Sliding menu overlay
-            if isMenuOpen {
-                MenuView(isMenuOpen: $isMenuOpen, activePage: .home)
+            if navigationState.isMenuOpen {
+                MenuView(isMenuOpen: $navigationState.isMenuOpen, activePage: .home)
                     .frame(width: UIScreen.main.bounds.width)
                     .transition(.move(edge: .leading))
                     .zIndex(2)
             }
         }
+        .toolbar(navigationState.isMenuOpen ? .hidden : .visible, for: .tabBar)
     }
     
     private func requestNotificationAuthorization() {

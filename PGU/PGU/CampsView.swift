@@ -42,7 +42,7 @@ struct UserLocationView: View {
 }
 
 struct CampsView: View {
-    @State private var isMenuOpen: Bool = false
+    @EnvironmentObject var navigationState: NavigationState
     @State private var searchText = ""
     
     // Updated camp locations for 2025
@@ -104,7 +104,7 @@ struct CampsView: View {
                 HStack {
                     Button(action: {
                         withAnimation {
-                            isMenuOpen.toggle()
+                            navigationState.isMenuOpen.toggle()
                         }
                     }) {
                         Image(systemName: "line.3.horizontal")
@@ -306,82 +306,17 @@ struct CampsView: View {
                     }
                 }
                 
-                // Bottom Navigation Tab Bar
-                HStack {
-                    Spacer()
-                    
-                    // Home Tab
-                    NavigationLink(destination: HomeView()) {
-                        VStack(spacing: 4) {
-                            Image(systemName: "house")
-                                .font(.system(size: 24))
-                                .foregroundColor(.gray)
-                            Text("Home")
-                                .font(.caption)
-                                .fontWeight(.semibold)
-                                .foregroundColor(.gray)
-                        }
-                    }
-                    
-                    Spacer()
-                    
-                    // Inbox Tab
-                    NavigationLink(destination: InboxView()) {
-                        VStack(spacing: 4) {
-                            Image(systemName: "tray")
-                                .font(.system(size: 24))
-                                .foregroundColor(.gray)
-                            Text("Inbox")
-                                .font(.caption)
-                                .fontWeight(.semibold)
-                                .foregroundColor(.gray)
-                        }
-                    }
-                    
-                    Spacer()
-                    
-                    // Camps Tab (Active)
-                    VStack(spacing: 4) {
-                        Image(systemName: "mappin.and.ellipse")
-                            .font(.system(size: 24))
-                            .foregroundColor(Color(hex: "c7972b"))
-                        Text("Camps")
-                            .font(.caption)
-                            .fontWeight(.semibold)
-                            .foregroundColor(Color(hex: "c7972b"))
-                    }
-                    
-                    Spacer()
-                    
-                    // Resources Tab
-                    NavigationLink(destination: FilmReviewView()) {
-                        VStack(spacing: 4) {
-                            Image(systemName: "basketball")
-                                .font(.system(size: 24))
-                                .foregroundColor(.gray)
-                            Text("Resources")
-                                .font(.caption)
-                                .fontWeight(.semibold)
-                                .foregroundColor(.gray)
-                        }
-                    }
-                    
-                    Spacer()
-                }
-                .padding(.top, 12)
-                .padding(.bottom, 8)
-                .background(Color.white)
-                .shadow(color: Color.black.opacity(0.05), radius: 10, y: -5)
             }
             
             // Sliding menu overlay
-            if isMenuOpen {
-                MenuView(isMenuOpen: $isMenuOpen, activePage: .camps)
+            if navigationState.isMenuOpen {
+                MenuView(isMenuOpen: $navigationState.isMenuOpen, activePage: .camps)
                     .frame(width: UIScreen.main.bounds.width)
                     .transition(.move(edge: .leading))
                     .zIndex(2)
             }
         }
+        .toolbar(navigationState.isMenuOpen ? .hidden : .visible, for: .tabBar)
         .onAppear {
             setupLocations()
         }

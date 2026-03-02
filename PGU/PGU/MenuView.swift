@@ -17,17 +17,14 @@ enum ActivePage: String {
 struct MenuView: View {
 
     @Binding var isMenuOpen: Bool
+    @EnvironmentObject var navigationState: NavigationState
     var activePage: ActivePage = .none
     @State private var showingLogoutAlert = false
     @State private var navigateToLogin = false
 
     @State private var userName = "John Doe"
 
-    @State private var navigateToHome = false
-    @State private var navigateToInbox = false
     @State private var navigateToCalendar = false
-    @State private var navigateToLocations = false
-    @State private var navigateToResources = false
     @State private var navigateToContactUs = false
     @State private var navigateToProfile = false
     @State private var navigateToScholarships = false
@@ -129,27 +126,35 @@ struct MenuView: View {
 
                             // Home
                             MenuRow(icon: "house.fill", title: "Home", subtitle: "Dashboard & updates", isHighlighted: activePage == .home) {
-                                navigateToHome = true
+                                withAnimation {
+                                    isMenuOpen = false
+                                }
+                                navigationState.selectedTab = .home
                             }
-                            .background(NavigationLink(destination: HomeView(), isActive: $navigateToHome) { EmptyView() }.hidden())
 
                             // Inbox
                             MenuRow(icon: "tray.fill", title: "Inbox", subtitle: "Messages & announcements", badgeCount: 3, isHighlighted: activePage == .inbox) {
-                                navigateToInbox = true
+                                withAnimation {
+                                    isMenuOpen = false
+                                }
+                                navigationState.selectedTab = .inbox
                             }
-                            .background(NavigationLink(destination: InboxView(), isActive: $navigateToInbox) { EmptyView() }.hidden())
 
                             // Find Camps
                             MenuRow(icon: "mappin", title: "Find Camps", subtitle: "2025 Summer Tour stops", isHighlighted: activePage == .camps) {
-                                navigateToLocations = true
+                                withAnimation {
+                                    isMenuOpen = false
+                                }
+                                navigationState.selectedTab = .camps
                             }
-                            .background(NavigationLink(destination: CampsView(), isActive: $navigateToLocations) { EmptyView() }.hidden())
 
                             // Resources
                             MenuRow(icon: "basketball.fill", title: "Resources", subtitle: "Podcast, videos & clips", isHighlighted: activePage == .resources) {
-                                navigateToResources = true
+                                withAnimation {
+                                    isMenuOpen = false
+                                }
+                                navigationState.selectedTab = .resources
                             }
-                            .background(NavigationLink(destination: FilmReviewView(), isActive: $navigateToResources) { EmptyView() }.hidden())
 
                             // Divider
                             Rectangle()
